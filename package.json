@@ -1,0 +1,26 @@
+{
+  "name": "template-video-editor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle src/index.ts",
+    "render": "remotion render src/index.ts Intro-Default dist/output.mp4",
+    "render:minimal": "remotion render src/index.ts Intro-Minimal dist/minimal.mp4",
+    "render:bold": "remotion render src/index.ts Intro-Bold dist/bold.mp4",
+    "render:lower-third": "remotion render src/index.ts LowerThird dist/lower-third.mp4",
+    "render:end-screen": "remotion render src/index.ts EndScreen dist/end-screen.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.0",
+    "@remotion/player": "4.0.0",
+    "remotion": "4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.3.0"
+  }
+}
