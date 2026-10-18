@@ -1,16 +1,19 @@
 import React, { Suspense } from "react";
-import { Sequence, AbsoluteFill } from "remotion";
+import { Sequence, AbsoluteFill, Audio } from "remotion";
 import { TemplateRegistry } from "./TemplateRegistry";
+import type { AudioTrackItem } from "../schemas/templates";
 
 export interface SceneItem {
   id: string;
   templateId: string;
   props: Record<string, any>;
   durationInFrames: number;
+  audioTracks?: AudioTrackItem[];
 }
 
 export interface FullVideoProps {
   scenes?: SceneItem[];
+  audioTracks?: AudioTrackItem[];
 }
 
 export const defaultScenes: SceneItem[] = [
@@ -52,7 +55,10 @@ export const defaultScenes: SceneItem[] = [
 export const calculateTotalDuration = (scenes: SceneItem[]): number =>
   scenes.reduce((sum, s) => sum + (s.durationInFrames || 150), 0) || 150;
 
-export const FullVideo: React.FC<FullVideoProps> = ({ scenes = defaultScenes }) => {
+export const FullVideo: React.FC<FullVideoProps> = ({ 
+  scenes = defaultScenes, 
+  audioTracks = [] 
+}) => {
   let accumulatedFrom = 0;
 
   return (
@@ -68,10 +74,23 @@ export const FullVideo: React.FC<FullVideoProps> = ({ scenes = defaultScenes }) 
           <Sequence key={scene.id} from={from} durationInFrames={scene.durationInFrames}>
             <Suspense fallback={<AbsoluteFill style={{ backgroundColor: "#000" }} />}>
               <Component {...scene.props} />
+              {scene.audioTracks?.map((track) => (
+                <Audio
+                  key={track.id}
+                  src={track.src}
+                  volume={track.volume ?? 1}
+                  placeholder={<div />}
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                />
+              ))}
             </Suspense>
           </Sequence>
         );
       })}
+      {audioTracks.map((track) => (
+        <Audio key={track.id} src={track.src} volume={track.volume ?? 1} placeholder={<div />} onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} />
+      ))}
     </AbsoluteFill>
   );
 };

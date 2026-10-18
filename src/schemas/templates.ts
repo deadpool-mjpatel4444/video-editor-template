@@ -17,7 +17,9 @@ export const IntroPropsSchema = BaseSchema.extend({
   subtitle: z.string().optional(),
   accentColor: z.string().default('#FF6B6B'),
   bgColor: z.string().default('#000000'),
-  animation: z.enum(['fadeIn', 'slideLeft', 'slideRight', 'slideUp', 'slideDown', 'scaleIn', 'none']).default('fadeIn'),
+  animation: z.enum([
+    'fadeIn', 'slideLeft', 'slideRight', 'slideUp', 'slideDown', 'scaleIn', 'none',
+  ]).default('fadeIn'),
 });
 
 export const LowerThirdPropsSchema = BaseSchema.extend({
@@ -37,4 +39,12 @@ export type BaseProps = z.infer<typeof BaseSchema>;
 export type IntroProps = z.infer<typeof IntroPropsSchema>;
 export type LowerThirdProps = z.infer<typeof LowerThirdPropsSchema>;
 export type EndScreenProps = z.infer<typeof EndScreenPropsSchema>;
-export type TemplateProps = IntroProps | LowerThirdProps | EndScreenProps;
+
+export const AudioTrackSchema = z.object({
+  id: z.string().optional(),
+  src: z.string(),
+  startAtFrame: z.number().optional(),
+  volume: z.number().optional(),
+});
+
+export type AudioTrackItem = z.infer<typeof AudioTrackSchema>;
