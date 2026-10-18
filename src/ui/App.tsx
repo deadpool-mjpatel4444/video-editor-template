@@ -4,6 +4,7 @@ import { TemplateRegistry } from "../templates/TemplateRegistry";
 import { PropsEditor } from "./PropsEditor";
 import { ControlledPlayer } from "./ControlledPlayer";
 import { RenderButton } from "./RenderButton";
+import { renderComposition, type VideoRenderResult } from "../render/render";
 import {
   FullVideo,
   defaultScenes,
@@ -11,7 +12,6 @@ import {
   type SceneItem,
 } from "../templates/FullVideo";
 import type { BaseProps } from "../templates/types";
-import { renderComposition } from "../render/render";
 
 type Category = "intro" | "lower-third" | "end-screen";
 type ViewMode = "template" | "sequence";
@@ -29,11 +29,7 @@ export const App: React.FC = () => {
     TemplateRegistry[0]?.defaultProps as BaseProps || {}
   );
   const [isRendering, setIsRendering] = React.useState(false);
-  const [renderResult, setRenderResult] = React.useState<{
-    success: boolean;
-    path?: string;
-    error?: string;
-  } | null>(null);
+  const [renderResult, setRenderResult] = React.useState<VideoRenderResult | null>(null);
 
   const selectedTemplate = TemplateRegistry.find(
     (t) => t.id === selectedTemplateId
@@ -75,15 +71,22 @@ export const App: React.FC = () => {
   const handleRender = async () => {
     setIsRendering(true);
     setRenderResult(null);
-    
+
     try {
-      if (viewMode === "sequence") {
-        const result = await renderComposition("FullVideo", { scenes }, { outputLocation: "./output" });
-        setRenderResult(result);
-      } else {
-        const result = await renderComposition(selectedTemplateId, props, { outputLocation: "./output" });
-        setRenderResult(result);
-      }
+      const compositionId = viewMode === "sequence" ? "FullVideo" : selectedTemplateId;
+      const renderProps = (viewMode === "sequence" ? { scenes } : props) as Record<string, unknown>;
+      const result = await renderComposition(compositionId, renderProps, {
+        outputLocation: "./output",
+      });
+      setRenderResult(result);
+      return result;
+    } catch (err) {
+      const result: VideoRenderResult = {
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+      setRenderResult(result);
+      return result;
     } finally {
       setIsRendering(false);
     }
@@ -292,13 +295,10 @@ export const App: React.FC = () => {
           <RenderButton 
             onRender={handleRender} 
             isRendering={isRendering}
+            renderResult={renderResult}
           />
           <span className={styled.hint}>
-            {renderResult?.success 
-              ? `Rendered: ${renderResult.path}` 
-              : renderResult?.error 
-                ? `Error: ${renderResult.error}` 
-                : `Rendering ${viewMode === "sequence" ? "Full Sequenced Video" : "Current Template"}`}
+            Rendering {viewMode === "sequence" ? "Full Sequenced Video" : "Current Template"} via Remotion Lambda
           </span>
         </div>
       </main>

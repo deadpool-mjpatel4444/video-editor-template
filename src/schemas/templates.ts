@@ -42,9 +42,9 @@ export type EndScreenProps = z.infer<typeof EndScreenPropsSchema>;
 
 export const AudioTrackSchema = z.object({
   id: z.string().optional(),
-  src: z.string(),
+  src: z.string().url("src must be a valid URL"),
   startAtFrame: z.number().optional(),
-  volume: z.number().optional(),
+  volume: z.number().min(0).max(1).optional().default(1),
 });
 
 export type AudioTrackItem = z.infer<typeof AudioTrackSchema>;

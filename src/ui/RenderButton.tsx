@@ -2,19 +2,34 @@ import React, { useState } from "react";
 import type { VideoRenderResult } from "../render/render";
 
 interface RenderButtonProps {
-  onRender: () => Promise<void>;
+  onRender: () => Promise<VideoRenderResult | void>;
   isRendering?: boolean;
-  renderResult?: VideoRenderResult;
+  renderResult?: VideoRenderResult | null;
 }
 
 export const RenderButton: React.FC<RenderButtonProps> = ({
   onRender,
   isRendering = false,
-  renderResult,
+  renderResult: propResult,
 }) => {
+  const [internalResult, setInternalResult] = useState<VideoRenderResult | null>(null);
+
   const handleClick = async () => {
-    await onRender();
+    setInternalResult(null);
+    try {
+      const result = await onRender();
+      if (result) {
+        setInternalResult(result);
+      }
+    } catch (err) {
+      setInternalResult({
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
   };
+
+  const result = propResult ?? internalResult;
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -36,18 +51,37 @@ export const RenderButton: React.FC<RenderButtonProps> = ({
         {isRendering ? "Rendering..." : "Render Video"}
       </button>
 
-      {renderResult && (
-        <span
-          style={{
-            color: renderResult.success ? "#4ECDC4" : "#FF6B6B",
-            fontSize: "13px",
-          }}
-        >
-          {renderResult.success
-            ? `✓ Rendered: ${renderResult.path}`
-            : `✗ Error: ${renderResult.error}`}
-        </span>
+      {result && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {result.success ? (
+            <>
+              <span style={{ color: "#4ECDC4", fontSize: "13px" }}>
+                ✓ Rendered: {result.path}
+              </span>
+              {result.path && (
+                <a
+                  href={result.path}
+                  download
+                  style={{
+                    color: "#4ECDC4",
+                    fontSize: "13px",
+                    textDecoration: "underline",
+                    fontWeight: 600,
+                  }}
+                >
+                  Download
+                </a>
+              )}
+            </>
+          ) : (
+            <span style={{ color: "#FF6B6B", fontSize: "13px" }}>
+              ✗ Error: {result.error || "Render failed"}
+            </span>
+          )}
+        </div>
       )}
     </div>
   );
 };
+
+export default RenderButton;
