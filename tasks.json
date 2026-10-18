@@ -1,0 +1,24 @@
+{
+  "tasks": [
+    {
+      "context": "video-editor project at /home/opc/templates/video-editor/",
+      "goal": "Build S3 asset management utilities for the Canva-clone:\n\n1. Create src/services/upload.ts with generateUploadUrl, generateDownloadUrl, UploadConfig interface\n2. Create src/services/media.ts with uploadMedia, deleteMedia functions\n3. Update .env.example with AWS config keys\n\nUse @aws-sdk/client-s3 and @aws-sdk/s3-request-presigner (already installed).",
+      "output_schema": {"type": "object", "properties": {"files_created": {"type": "array", "items": {"type": "string"}}, "success": {"type": "boolean"}}}
+    },
+    {
+      "context": "video-editor project at /home/opc/templates/video-editor/src/templates/types.ts",
+      "goal": "Create Zod schemas for template prop validation:\n\n1. Create src/schemas/templates.ts with BaseSchema, IntroPropsSchema, LowerThirdPropsSchema, EndScreenPropsSchema, TemplateProps union\n2. Update src/templates/types.ts to import schema types\n3. Create src/engine/validation.ts with validateProps and getDefaultProps functions\n\nPonytail: one schema file, reuse Zod's inferType pattern.",
+      "output_schema": {"type": "object", "properties": {"schemas_created": {"type": "boolean"}, "types_updated": {"type": "boolean"}}}
+    },
+    {
+      "context": "video-editor project at /home/opc/templates/video-editor/src/ui/Preview.tsx",
+      "goal": "Build controlled Player component with timeline sync:\n\n1. Create src/ui/ControlledPlayer.tsx with props: compositionId, inputs, onTimelineUpdate, onPlayStateChange\n2. Use @remotion/player Camera controls\n3. Update src/ui/App.tsx to use ControlledPlayer with frame state\n4. Add simple scrubber UI\n\nPonytail: wrap existing Player, don't rebuild wheel.",
+      "output_schema": {"type": "object", "properties": {"controlled_player_created": {"type": "boolean"}, "app_updated": {"type": "boolean"}}}
+    },
+    {
+      "context": "video-editor project at /home/opc/templates/video-editor/src/templates/TemplateRegistry.ts",
+      "goal": "Implement lazy-loading template registry:\n\n1. Create src/templates/TemplateLoader.ts with dynamic import() and simple cache object\n2. Functions: getTemplate(id): Promise<TemplateDef>, getAllTemplates(): Promise<TemplateDef[]>\n3. Update TemplateRegistry.ts for lazy loading - remove heavy component imports from top level\n4. Create src/templates/index.ts barrel with re-exports\n\nPonytail: simple cache object, no sophisticated cache lib.",
+      "output_schema": {"type": "object", "properties": {"loader_created": {"type": "boolean"}, "registry_updated": {"type": "boolean"}}}
+    }
+  ]
+}

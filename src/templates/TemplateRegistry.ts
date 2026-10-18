@@ -1,19 +1,13 @@
 import React from "react";
-import { Composition } from "remotion";
-import {
-  DefaultIntro,
-  MinimalIntro,
-  BoldIntro,
-} from "./Intro";
-import { LowerThirdTemplate } from "./LowerThird";
-import { EndScreenTemplate } from "./EndScreen";
 import type { TemplateDef } from "./types";
 
-// Template definitions with type safety
+// Template definitions with lazy loading (no heavy component imports at top level)
 export const TemplateRegistry: TemplateDef<any>[] = [
   {
     id: "intro-default",
-    component: DefaultIntro,
+    component: React.lazy(() =>
+      import("./Intro").then((m) => ({ default: m.DefaultIntro }))
+    ) as unknown as React.FC<any>,
     defaultProps: {
       title: "Welcome",
       subtitle: "My Video",
@@ -26,7 +20,9 @@ export const TemplateRegistry: TemplateDef<any>[] = [
   },
   {
     id: "intro-minimal",
-    component: MinimalIntro,
+    component: React.lazy(() =>
+      import("./Intro").then((m) => ({ default: m.MinimalIntro }))
+    ) as unknown as React.FC<any>,
     defaultProps: {
       title: "Welcome",
       subtitle: "My Video",
@@ -39,7 +35,9 @@ export const TemplateRegistry: TemplateDef<any>[] = [
   },
   {
     id: "intro-bold",
-    component: BoldIntro,
+    component: React.lazy(() =>
+      import("./Intro").then((m) => ({ default: m.BoldIntro }))
+    ) as unknown as React.FC<any>,
     defaultProps: {
       title: "Welcome",
       subtitle: "My Video",
@@ -52,7 +50,9 @@ export const TemplateRegistry: TemplateDef<any>[] = [
   },
   {
     id: "lower-third",
-    component: LowerThirdTemplate,
+    component: React.lazy(() =>
+      import("./LowerThird").then((m) => ({ default: m.LowerThirdTemplate }))
+    ) as unknown as React.FC<any>,
     defaultProps: {
       name: "Monank Sojitra",
       role: "Full Stack Developer",
@@ -64,7 +64,9 @@ export const TemplateRegistry: TemplateDef<any>[] = [
   },
   {
     id: "end-screen",
-    component: EndScreenTemplate,
+    component: React.lazy(() =>
+      import("./EndScreen").then((m) => ({ default: m.EndScreenTemplate }))
+    ) as unknown as React.FC<any>,
     defaultProps: {
       title: "Thanks for Watching",
       cta: "Subscribe",
@@ -77,22 +79,34 @@ export const TemplateRegistry: TemplateDef<any>[] = [
 
 // Export for direct composition use
 export const IntroTemplates = {
-  default: DefaultIntro,
-  minimal: MinimalIntro,
-  bold: BoldIntro,
+  default: React.lazy(() =>
+    import("./Intro").then((m) => ({ default: m.DefaultIntro }))
+  ),
+  minimal: React.lazy(() =>
+    import("./Intro").then((m) => ({ default: m.MinimalIntro }))
+  ),
+  bold: React.lazy(() =>
+    import("./Intro").then((m) => ({ default: m.BoldIntro }))
+  ),
 };
 
 export const LowerThirdTemplates = {
-  default: LowerThirdTemplate,
+  default: React.lazy(() =>
+    import("./LowerThird").then((m) => ({ default: m.LowerThirdTemplate }))
+  ),
 };
 
 export const EndScreenTemplates = {
-  default: EndScreenTemplate,
+  default: React.lazy(() =>
+    import("./EndScreen").then((m) => ({ default: m.EndScreenTemplate }))
+  ),
 };
 
 // Get template by ID
 export const getTemplate = (id: string) =>
   TemplateRegistry.find((t) => t.id === id);
+
+export const getTemplateSync = getTemplate;
 
 // Get templates by category
 export const getTemplatesByCategory = (category: string) =>

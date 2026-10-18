@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TemplateRegistry } from "../templates/TemplateRegistry";
 import { getTemplatesByCategory } from "../engine/TemplateEngine";
 import { PropsEditor } from "./PropsEditor";
-import { Preview } from "./Preview";
+import { ControlledPlayer } from "./ControlledPlayer";
 import { RenderButton } from "./RenderButton";
 import type { BaseProps } from "../templates/types";
 
@@ -15,10 +15,12 @@ export const App: React.FC = () => {
   const [selectedTemplateId, setSelectedTemplateId] = useState(
     TemplateRegistry[0].id
   );
+  const [currentFrame, setCurrentFrame] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const [props, setProps] = useState<BaseProps>(
     TemplateRegistry[0].defaultProps
   );
-
   const templates = getTemplatesByCategory(activeCategory);
   const selectedTemplate = TemplateRegistry.find(
     (t) => t.id === selectedTemplateId
@@ -92,11 +94,14 @@ export const App: React.FC = () => {
         {/* Preview area */}
         <div className={styled.previewArea}>
           {selectedTemplate && (
-            <Preview
+            <ControlledPlayer
+              compositionId={selectedTemplate.id}
               component={selectedTemplate.component}
               inputProps={props}
               durationInFrames={selectedTemplate.defaultProps.durationInFrames || 300}
               fps={selectedTemplate.defaultProps.fps || 30}
+              onTimelineUpdate={setCurrentFrame}
+              onPlayStateChange={setIsPlaying}
             />
           )}
         </div>
