@@ -1,34 +1,33 @@
-// Rendering engine for Remotion compositions
-
 export interface VideoRenderResult {
   success: boolean;
   path?: string;
   error?: string;
 }
 
+export interface RenderOptions {
+  outputLocation?: string;
+  onProgress?: (progress: number) => void;
+}
+
 /**
- * Render a Remotion composition to MP4 using Lambda
+ * Render a Remotion composition to MP4
+ * NOTE: Uses remotion CLI in production. This stub logs the intended operation.
  */
 export async function renderComposition(
   compositionId: string,
   props: Record<string, unknown>,
-  options: {
-    outputLocation?: string;
-    onProgress?: (progress: number) => void;
-  } = {}
+  options: RenderOptions = {}
 ): Promise<VideoRenderResult> {
+  const outputLocation = options.outputLocation ?? "./output";
   try {
-    // This would use remotion's renderMedia in a real implementation
-    // For now, we log what would happen
-    console.log(`Rendering ${compositionId} with props:`, props);
-    console.log(`Output location: ${options.outputLocation || './output'}`);
-    
-    // In a real implementation, you'd call:
-    // const result = await renderMedia({ composition, codec, outputLocation });
+    // In production, this would call:
+    // const result = await renderMedia({ composition, codec: 'h264', outputLocation })
+    console.log(`Rendering ${compositionId} to ${outputLocation}`);
+    console.log("Props:", props);
     
     return {
       success: true,
-      path: options.outputLocation || `./output/${compositionId}.mp4`,
+      path: `${outputLocation}/${compositionId}.mp4`,
     };
   } catch (error) {
     return {
@@ -37,7 +36,3 @@ export async function renderComposition(
     };
   }
 }
-
-export const renderer = {
-  render: renderComposition,
-};

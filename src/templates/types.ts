@@ -1,4 +1,5 @@
 // Template Schema Types
+import type { AudioTrackItem } from "../schemas/templates";
 
 export type Variant = "default" | "minimal" | "bold" | "dark" | "neon";
 
@@ -23,6 +24,7 @@ export interface BaseProps {
   mediaUrl?: string;
   animation?: AnimationStyle;
   position?: "bottom-left" | "bottom-center" | "bottom-right";
+  audioTracks?: AudioTrackItem[];
   [key: string]: unknown;
 }
 

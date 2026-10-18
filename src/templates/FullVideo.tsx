@@ -75,6 +75,8 @@ export const FullVideo: React.FC<FullVideoProps> = ({
             <Suspense fallback={<AbsoluteFill style={{ backgroundColor: "#000" }} />}>
               <Component {...scene.props} />
               {scene.audioTracks?.map((track) => (
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore - Remotion Audio types require placeholder in strict mode
                 <Audio
                   key={track.id}
                   src={track.src}
@@ -89,6 +91,8 @@ export const FullVideo: React.FC<FullVideoProps> = ({
         );
       })}
       {audioTracks.map((track) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - Remotion Audio types require placeholder in strict mode
         <Audio key={track.id} src={track.src} volume={track.volume ?? 1} placeholder={<div />} onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}} />
       ))}
     </AbsoluteFill>
