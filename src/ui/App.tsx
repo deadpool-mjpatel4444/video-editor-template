@@ -11,6 +11,7 @@ import {
   type SceneItem,
 } from "../templates/FullVideo";
 import type { BaseProps } from "../templates/types";
+import { renderComposition } from "../render/render";
 
 type Category = "intro" | "lower-third" | "end-screen";
 type ViewMode = "template" | "sequence";
@@ -27,6 +28,12 @@ export const App: React.FC = () => {
   const [props, setProps] = React.useState<BaseProps>(
     TemplateRegistry[0]?.defaultProps as BaseProps || {}
   );
+  const [isRendering, setIsRendering] = React.useState(false);
+  const [renderResult, setRenderResult] = React.useState<{
+    success: boolean;
+    path?: string;
+    error?: string;
+  } | null>(null);
 
   const selectedTemplate = TemplateRegistry.find(
     (t) => t.id === selectedTemplateId
@@ -66,10 +73,19 @@ export const App: React.FC = () => {
   };
 
   const handleRender = async () => {
-    if (viewMode === "sequence") {
-      console.log("Rendering full sequence with scenes:", scenes);
-    } else {
-      console.log("Rendering template:", selectedTemplateId, "with props:", props);
+    setIsRendering(true);
+    setRenderResult(null);
+    
+    try {
+      if (viewMode === "sequence") {
+        const result = await renderComposition("FullVideo", { scenes }, { outputLocation: "./output" });
+        setRenderResult(result);
+      } else {
+        const result = await renderComposition(selectedTemplateId, props, { outputLocation: "./output" });
+        setRenderResult(result);
+      }
+    } finally {
+      setIsRendering(false);
     }
   };
 
@@ -236,7 +252,6 @@ export const App: React.FC = () => {
                 e.preventDefault();
                 const dragIdx = Number(e.dataTransfer.getData("text/plain"));
                 if (!Number.isNaN(dragIdx) && dragIdx !== idx) {
-                  // Import reorderScenes dynamically to avoid circular dependency
                   import("../engine/timeline").then(({ reorderScenes }) => {
                     const reordered = reorderScenes(scenes, dragIdx, idx);
                     setScenes(reordered);
@@ -274,9 +289,16 @@ export const App: React.FC = () => {
         />
 
         <div className={styled.renderBar}>
-          <RenderButton onRender={handleRender} />
+          <RenderButton 
+            onRender={handleRender} 
+            isRendering={isRendering}
+          />
           <span className={styled.hint}>
-            Rendering {viewMode === "sequence" ? "Full Sequenced Video" : "Current Template"} via Remotion Lambda
+            {renderResult?.success 
+              ? `Rendered: ${renderResult.path}` 
+              : renderResult?.error 
+                ? `Error: ${renderResult.error}` 
+                : `Rendering ${viewMode === "sequence" ? "Full Sequenced Video" : "Current Template"}`}
           </span>
         </div>
       </main>

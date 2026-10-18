@@ -1,28 +1,19 @@
 import React, { useState } from "react";
+import type { VideoRenderResult } from "../render/render";
 
 interface RenderButtonProps {
   onRender: () => Promise<void>;
   isRendering?: boolean;
+  renderResult?: VideoRenderResult;
 }
 
 export const RenderButton: React.FC<RenderButtonProps> = ({
   onRender,
   isRendering = false,
+  renderResult,
 }) => {
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
-
   const handleClick = async () => {
-    setStatus("idle");
-    setMessage("");
-    try {
-      await onRender();
-      setStatus("success");
-      setMessage("Render started (check Lambda console)");
-    } catch (err) {
-      setStatus("error");
-      setMessage(err instanceof Error ? err.message : "Render failed");
-    }
+    await onRender();
   };
 
   return (
@@ -45,11 +36,17 @@ export const RenderButton: React.FC<RenderButtonProps> = ({
         {isRendering ? "Rendering..." : "Render Video"}
       </button>
 
-      {status === "success" && (
-        <span style={{ color: "#4ECDC4", fontSize: "13px" }}>{message}</span>
-      )}
-      {status === "error" && (
-        <span style={{ color: "#FF6B6B", fontSize: "13px" }}>{message}</span>
+      {renderResult && (
+        <span
+          style={{
+            color: renderResult.success ? "#4ECDC4" : "#FF6B6B",
+            fontSize: "13px",
+          }}
+        >
+          {renderResult.success
+            ? `✓ Rendered: ${renderResult.path}`
+            : `✗ Error: ${renderResult.error}`}
+        </span>
       )}
     </div>
   );
