@@ -43,11 +43,11 @@ export function getDefaultProps(templateId: string): Record<string, unknown> {
     case 'intro-default':
     case 'intro-minimal':
     case 'intro-bold':
-      return IntroPropsSchema.parse({ title: 'Welcome' });
+      return IntroPropsSchema.parse({ id: templateId, title: 'Welcome' });
     case 'lower-third':
-      return LowerThirdPropsSchema.parse({ name: 'John Doe' });
+      return LowerThirdPropsSchema.parse({ id: templateId, name: 'John Doe' });
     case 'end-screen':
-      return EndScreenPropsSchema.parse({ title: 'Subscribe', cta: 'Click here' });
+      return EndScreenPropsSchema.parse({ id: templateId, title: 'Subscribe', cta: 'Click here' });
     default:
       return {};
   }

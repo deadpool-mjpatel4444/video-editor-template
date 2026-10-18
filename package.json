@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle src/index.ts",
+    "test": "tsc && node dist/test-suite.js",
     "render": "remotion render src/index.ts Intro-Default dist/output.mp4",
     "render:minimal": "remotion render src/index.ts Intro-Minimal dist/minimal.mp4",
     "render:bold": "remotion render src/index.ts Intro-Bold dist/bold.mp4",

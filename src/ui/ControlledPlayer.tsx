@@ -3,8 +3,8 @@ import { Player, PlayerRef } from "@remotion/player";
 import type { BaseProps } from "../templates/types";
 
 interface ControlledPlayerProps {
-  component: React.FC<BaseProps>;
-  inputProps: BaseProps;
+  component: React.FC<any>;
+  inputProps: any;
   durationInFrames: number;
   fps: number;
   compositionId?: string;

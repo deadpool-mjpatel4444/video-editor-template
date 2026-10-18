@@ -124,6 +124,28 @@ export const PropsEditor: React.FC<PropsEditorProps> = ({
           onChange={(e) => handleChange("bgColor", e.target.value)}
         />
       </div>
+
+      <div className="field">
+        <label>Media Asset (URL or Upload)</label>
+        <input
+          type="text"
+          placeholder="https://... or choose file"
+          value={props.mediaUrl || ""}
+          onChange={(e) => handleChange("mediaUrl", e.target.value)}
+        />
+        <input
+          type="file"
+          accept="image/*,video/*"
+          style={{ marginTop: "6px", fontSize: "12px", color: "#888" }}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const url = URL.createObjectURL(file);
+              handleChange("mediaUrl", url);
+            }
+          }}
+        />
+      </div>
     </div>
   );
 };

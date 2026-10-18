@@ -20,6 +20,7 @@ export interface BaseProps {
   cta?: string;
   accentColor?: string;
   bgColor?: string;
+  mediaUrl?: string;
   animation?: AnimationStyle;
   position?: "bottom-left" | "bottom-center" | "bottom-right";
   [key: string]: unknown;

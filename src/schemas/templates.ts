@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const BaseSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   version: z.string().optional(),
   title: z.string().optional(),
   subtitle: z.string().optional(),
