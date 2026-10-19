@@ -291,14 +291,32 @@ export const App: React.FC = () => {
           onChange={handlePropChange}
         />
 
-        <div className={styled.renderBar}>
-          <RenderButton 
-            onRender={handleRender} 
+        <div className={styled.renderBar} style={{ flexDirection: "column", alignItems: "stretch", gap: "12px" }}>
+          <RenderButton
+            onRender={handleRender}
             isRendering={isRendering}
             renderResult={renderResult}
           />
+          {renderResult?.success && renderResult?.downloadUrl && (
+            <a
+              href={renderResult.downloadUrl}
+              download
+              style={{
+                padding: "10px",
+                background: "#2a2a2a",
+                border: "1px solid #4ECDC4",
+                borderRadius: "6px",
+                color: "#4ECDC4",
+                textAlign: "center",
+                textDecoration: "none",
+                fontWeight: 600,
+              }}
+            >
+              Download Video
+            </a>
+          )}
           <span className={styled.hint}>
-            Rendering {viewMode === "sequence" ? "Full Sequenced Video" : "Current Template"} via Remotion Lambda
+            Rendering {viewMode === "sequence" ? "Full Sequenced Video" : "Current Template"} locally via @remotion/renderer
           </span>
         </div>
       </main>

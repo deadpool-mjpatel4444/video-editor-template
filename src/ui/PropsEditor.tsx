@@ -150,6 +150,35 @@ export const PropsEditor: React.FC<PropsEditorProps> = ({
         />
       </div>
 
+      <h3>Audio Mixing</h3>
+      
+      <div className="field">
+        <label>Crossfade Duration (ms)</label>
+        <input
+          type="number"
+          min="0"
+          max="5000"
+          step="100"
+          value={(props as any).crossfadeMs || 1000}
+          onChange={(e) => handleChange("crossfadeMs", parseInt(e.target.value))}
+        />
+      </div>
+
+      <div className="field">
+        <label>Duck Volume</label>
+        <input
+          type="range"
+          min="0"
+          max="0.8"
+          step="0.1"
+          value={(props as any).duckAmount || 0.3}
+          onChange={(e) => handleChange("duckAmount", parseFloat(e.target.value))}
+        />
+        <span style={{ fontSize: "12px", color: "#888" }}>
+          {(props as any).duckAmount || 0.3}
+        </span>
+      </div>
+
       <div className="field">
         <label>Audio Tracks</label>
         {(props.audioTracks || []).map((track, index) => (
