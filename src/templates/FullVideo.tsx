@@ -1,7 +1,8 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import { Sequence, AbsoluteFill, Audio } from "remotion";
 import { TemplateRegistry } from "./TemplateRegistry";
 import type { AudioTrackItem } from "../schemas/templates";
+import { crossfade, duck } from "../engine/mixing";
 
 export interface SceneItem {
   id: string;
@@ -55,9 +56,9 @@ export const defaultScenes: SceneItem[] = [
 export const calculateTotalDuration = (scenes: SceneItem[]): number =>
   scenes.reduce((sum, s) => sum + (s.durationInFrames || 150), 0) || 150;
 
-export const FullVideo: React.FC<FullVideoProps> = ({ 
-  scenes = defaultScenes, 
-  audioTracks = [] 
+export const FullVideo: React.FC<FullVideoProps> = ({
+  scenes = defaultScenes,
+  audioTracks = [],
 }) => {
   let accumulatedFrom = 0;
 
@@ -70,11 +71,15 @@ export const FullVideo: React.FC<FullVideoProps> = ({
         if (!template) return null;
         const Component = template.component;
 
+        const mixedTracks = scene.audioTracks
+          ? crossfade(duck(scene.audioTracks))
+          : [];
+
         return (
           <Sequence key={scene.id} from={from} durationInFrames={scene.durationInFrames}>
             <Suspense fallback={<AbsoluteFill style={{ backgroundColor: "#000" }} />}>
               <Component {...scene.props} />
-              {scene.audioTracks?.map((track) => (
+              {mixedTracks.map((track) => (
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore - Remotion Audio types require placeholder in strict mode
                 <Audio

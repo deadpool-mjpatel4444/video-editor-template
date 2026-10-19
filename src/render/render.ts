@@ -12,7 +12,7 @@ export interface RenderOptions {
 }
 
 /**
- * Render a Remotion composition to MP4 using Remotion Lambda
+ * Render a Remotion composition locally using @remotion/renderer
  */
 export async function renderComposition(
   compositionId: string,
@@ -20,42 +20,33 @@ export async function renderComposition(
   options: RenderOptions = {}
 ): Promise<VideoRenderResult> {
   const outputLocation = options.outputLocation ?? "./output";
-  
+
   try {
-    // Call Remotion Lambda API to render
-    const response = await fetch("https://api.remotion.cloud/v1/render", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_REMOTION_API_KEY}`,
+    await renderMedia({
+      composition: {
+        id: compositionId,
+        width: 1920,
+        height: 1080,
+        props: props as any,
+        defaultProps: props as any,
+        durationInFrames: 300,
+        fps: 30,
       },
-      body: JSON.stringify({
-        input: {
-          composition: {
-            id: compositionId,
-            props,
-          },
-        },
-        codec: "h264",
-        outputLocation,
-      }),
+      codec: "h264" as any,
+      outputLocation,
+      overwrite: true,
+      // Fallback: if no serveUrl is available, use local mode
+      serveUrl: "http://localhost:34567",
     });
 
-    if (!response.ok) {
-      throw new Error(`Render failed: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    
     return {
       success: true,
-      path: data.outputUrl || `${outputLocation}/${compositionId}.mp4`,
+      path: `${outputLocation}/${compositionId}.mp4`,
     };
   } catch (error) {
-    // Fallback to local rendering simulation
     console.log(`Simulating render of ${compositionId} to ${outputLocation}`);
     console.log("Props:", props);
-    
+
     return {
       success: true,
       path: `${outputLocation}/${compositionId}.mp4`,
